@@ -12,7 +12,6 @@ def process_url():
     if not url:
         return jsonify({"error": "URL is required"}), 400
 
-    # Seleniumを使用して処理
     try:
         result = selenium_process(url)
     except Exception as e:
@@ -26,7 +25,9 @@ def selenium_process(url):
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    service = Service(ChromeDriverManager().install())
+    
+    # キャッシュディレクトリを/tmpに指定
+    service = Service(ChromeDriverManager(cache_valid_range=7, path="/tmp").install())
 
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(url)
@@ -36,4 +37,3 @@ def selenium_process(url):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
