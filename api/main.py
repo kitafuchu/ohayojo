@@ -20,14 +20,16 @@ def process_url():
     return jsonify({"status": "success", "data": result})
 
 def selenium_process(url):
-    # WebDriverの設定とURL処理
+    # WebDriverの設定
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    
-    # キャッシュディレクトリを/tmpに指定
-    service = Service(ChromeDriverManager(cache_valid_range=7, path="/tmp").install())
+    options.add_argument("--headless")  # ヘッドレスモード
+    options.add_argument("--no-sandbox")  # サンドボックス無効化
+    options.add_argument("--disable-dev-shm-usage")  # /dev/shmの共有メモリ制限対応
+    options.add_argument("--disable-gpu")  # GPU無効化（必要に応じて）
+    options.add_argument("--remote-allow-origins=*")  # オリジンエラー対応
+
+    # ドライバを/tmpに保存
+    service = Service(ChromeDriverManager(path="/tmp").install())
 
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(url)
